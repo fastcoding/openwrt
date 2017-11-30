@@ -1,3 +1,10 @@
+
+just crossbuilt on macos, added few changes
+
+1. build.sh
+2. files in $(TOPDIR)/usr/bin
+3. patches for bison and m4
+
 This is the buildsystem for the OpenWrt Linux distribution.
 
 Please use "make menuconfig" to configure your appreciated
