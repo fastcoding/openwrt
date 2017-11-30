@@ -1,0 +1,47 @@
+#!/usr/bin/perl
+use strict;
+use warnings;
+
+sub sysrun{
+#	print "run:",join(' ',@_),$/;
+	my $r=system(@_);
+	return ($r>>8);
+}
+
+sub git{
+	my @args;
+	if (@_==1 && ($_[0] eq 'clone' )){
+		print "#--recursive",$/;
+		exit 0
+	}
+	for my $i (@_){
+		if ($i=~/^--recursive$/){
+			$i="--recurse-submodules"
+		}	
+		push @args,$i;
+	}
+	sysrun("/usr/local/bin/git",@args);
+}
+sub openssl{
+	if (@_==1 && ($_[0] eq 'version')){
+		my $v=`/usr/bin/openssl version`;
+		print "OpenSSL $v";
+		exit 0;
+	}
+	sysrun("/usr/bin/openssl",@_);
+}
+
+my @supports=qw(git openssl);
+for my $func(@supports){
+	if ($0=~/(?:^\s*|\/)$func$/) {
+		no strict 'subs','refs';
+		&{$func}(@ARGV);
+	}
+}
+for my $loc('/usr/bin','/usr/local/bin'){
+	my $path= $loc . '/' . $0;
+	if (-x $path) {
+		print STDERR 'run:',$path,$/;
+		sysrun($path,@ARGV);
+	}	
+}
